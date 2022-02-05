@@ -13,6 +13,8 @@ def gen_perms(seq):
     ... except StopIteration:
     ...     print('No more permutations!')
     No more permutations!
+    >>> list(gen_perms([1,2]))
+    [[1, 2], [2, 1]]
     >>> sorted(gen_perms([1, 2, 3])) # Returns a sorted list containing elements of the generator
     [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]
     >>> sorted(gen_perms((10, 20, 30)))
@@ -20,7 +22,23 @@ def gen_perms(seq):
     >>> sorted(gen_perms("ab"))
     [['a', 'b'], ['b', 'a']]
     """
-    "*** YOUR CODE HERE ***"
+    seq = list(seq)
+    if len(seq) == 1:
+        yield seq
+    else:
+        for i in range(len(seq)):
+            sub_perm = list(gen_perms(seq[1:]))
+            # print("DEBUG: sub_perm is ", sub_perm )
+            # print("DEBUG: seq is ", seq )
+            # sub_perm[0].insert(i, seq[0])
+            # print("DEBUG: after insert is ", sub_perm[0] )
+            for x in sub_perm:
+                x.insert(i, seq[0])
+            yield from sub_perm
+            
+
+
+
 
 
 def path_yielder(t, value):
@@ -57,10 +75,11 @@ def path_yielder(t, value):
     >>> sorted(list(path_to_2))
     [[0, 2], [0, 2, 1, 2]]
     """
-    "*** YOUR CODE HERE ***"
-    for _______________ in _________________:
-        for _______________ in _________________:
-            "*** YOUR CODE HERE ***"
+    if label(t)==value:
+        yield [value]
+    for branch in branches(t):
+        for path in path_yielder(branch,value):
+            yield [label(t)] + path
 
 
 def preorder(t):
@@ -73,7 +92,13 @@ def preorder(t):
     >>> preorder(tree(2, [tree(4, [tree(6)])]))
     [2, 4, 6]
     """
-    "*** YOUR CODE HERE ***"
+    result = []
+    def pre_traverse(t):
+        result.append(label(t))
+        for x in branches(t):
+            pre_traverse(x)
+    pre_traverse(t)
+    return result
 
 
 def generate_preorder(t):
@@ -87,7 +112,9 @@ def generate_preorder(t):
     >>> list(gen)
     [2, 3, 4, 5, 6, 7]
     """
-    "*** YOUR CODE HERE ***"
+    yield label(t)
+    for x in branches(t):
+        yield from generate_preorder(x)
 
 
 def remainders_generator(m):
@@ -121,7 +148,13 @@ def remainders_generator(m):
     7
     11
     """
-    "*** YOUR CODE HERE ***"
+    def gen_with_remainder(r):
+        for i in naturals():
+            if i%m == r:
+                yield i
+
+    for r in range(m):
+        yield gen_with_remainder(r)
 
 
 class Tree:
