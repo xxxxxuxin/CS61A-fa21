@@ -35,8 +35,37 @@ class VendingMachine:
     >>> w.vend()
     'Here is your soda.'
     """
-    "*** YOUR CODE HERE ***"
+    stock = 0
+    funds = 0
 
+    def __init__(self, product, price):
+        self.product = product
+        self.price = price
+
+    def add_funds(self, amount):
+        if self.stock:
+            self.funds += amount
+            return f'Current balance: ${self.funds}'
+        else:
+            return f'Nothing left to vend. Please restock. Here is your ${amount}.'
+
+    def restock(self, amount):
+        self.stock += amount
+        return f'Current {self.product} stock: {self.stock}'
+
+    def vend(self):
+        if not self.stock:
+            return 'Nothing left to vend. Please restock.'
+        elif self.funds < self.price:
+            return f'You must add ${self.price - self.funds} more funds.'
+        else:
+            change = self.funds - self.price
+            self.stock -=1
+            self.funds = 0 
+            if change:
+                return f'Here is your {self.product} and ${change} change.'
+            else:
+                return f'Here is your {self.product}.'
 
 class Mint:
     """A mint creates coins by stamping on years.
@@ -73,10 +102,10 @@ class Mint:
         self.update()
 
     def create(self, kind):
-        "*** YOUR CODE HERE ***"
+        return kind(self.year)
 
     def update(self):
-        "*** YOUR CODE HERE ***"
+        self.year = self.present_year
 
 
 class Coin:
@@ -84,7 +113,11 @@ class Coin:
         self.year = year
 
     def worth(self):
-        "*** YOUR CODE HERE ***"
+        antique_value = Mint.present_year - self.year -50
+        if  antique_value > 0:
+            return self.cents + antique_value
+        else:
+            return self.cents
 
 
 class Nickel(Coin):
@@ -111,7 +144,10 @@ def store_digits(n):
     >>> print("Do not use str or reversed!") if any([r in cleaned for r in ["str", "reversed"]]) else None
     >>> link1 = Link(3, Link(Link(4), Link(5, Link(6))))
     """
-    "*** YOUR CODE HERE ***"
+    final = Link.empty
+    while n:
+        final, n = Link(n%10, final), n//10
+    return final
 
 
 def deep_map_mut(fn, link):
@@ -131,7 +167,17 @@ def deep_map_mut(fn, link):
     >>> print(link1)
     <9 <16> 25 36>
     """
-    "*** YOUR CODE HERE ***"
+
+    if isinstance(link.first, Link):
+        link.first = deep_map_mut(fn, link.first) 
+    else:
+        link.first = fn(link.first)
+
+    if link.rest == Link.empty:
+        return link # leap of faith!
+    else:
+        link.rest = deep_map_mut(fn, link.rest)
+        return link
 
 
 def two_list(vals, amounts):
@@ -153,7 +199,12 @@ def two_list(vals, amounts):
     >>> c
     Link(1, Link(1, Link(3, Link(3, Link(2)))))
     """
-    "*** YOUR CODE HERE ***"
+    linked = Link.empty
+    for val in vals[::-1]:
+        amount = amounts.pop()
+        for _ in range(amount):
+            linked = Link(val, linked)
+    return linked
 
 
 class VirFib():
@@ -182,7 +233,11 @@ class VirFib():
         self.value = value
 
     def next(self):
-        "*** YOUR CODE HERE ***"
+        if self.value == 0:
+            self.prev = VirFib(1)
+        nextV = VirFib(self.value + self.prev.value)
+        nextV.prev = self
+        return nextV
 
     def __repr__(self):
         return "VirFib object, value " + str(self.value)
@@ -213,7 +268,37 @@ def is_bst(t):
     >>> is_bst(t7)
     False
     """
-    "*** YOUR CODE HERE ***"
+    def bst_max(t):
+        res = t.label
+        while t.branches:
+            right = t.branches[-1]
+            if right.label > res:
+                res = right.label
+            t = right
+        return res
+
+    def bst_min(t):
+        res = t.label
+        while t.branches:
+            left = t.branches[0]
+            if left.label < res:
+                res = left.label
+            t = left
+        return res
+
+    if t.is_leaf(): 
+        return True
+    if len(t.branches) > 2 :
+        return False
+    elif len(t.branches) ==1:
+        if t.branches[0].label <= t.label:
+            return is_bst(t.branches[0]) and bst_max(t.branches[0])<=t.label
+        else:
+            return is_bst(t.branches[0]) and bst_min(t.branches[0])>t.label
+    else:
+        left = t.branches[0]
+        right = t.branches[1]
+        return  is_bst(left) and is_bst(right) and bst_max(left) <= t.label < bst_min(right) 
 
 
 class Link:

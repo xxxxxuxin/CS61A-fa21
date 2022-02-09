@@ -109,7 +109,7 @@ class Ant(Insect):
     blocks_path = True
     # ADD CLASS ATTRIBUTES HERE
 
-    def __init__(self, health=1):
+    def __init__(self, health=10):
         """Create an Insect with a HEALTH quantity."""
         super().__init__(health)
 
@@ -177,7 +177,7 @@ class HarvesterAnt(Ant):
         gamestate -- The GameState, used to access game state information.
         """
         # BEGIN Problem 1
-        gamestate.food += 1
+        gamestate.food += 10
         # END Problem 1
 
 
