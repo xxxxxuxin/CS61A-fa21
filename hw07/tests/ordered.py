@@ -1,37 +1,43 @@
 test = {
-  'name': 'cadr-caddr',
+  'name': 'ordered?',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          scm> (cddr '(1 2 3 4))
-          0ed1a53f06011effab45b3ff5d11631b
-          # locked
+          scm> (ordered? '(1 2 3 4 5))  ; #t or #f
+          #t
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         },
         {
           'code': r"""
-          scm> (cadr '(1 2 3 4))
-          9e912e512c4a5bd85d3693205c7f635c
-          # locked
+          scm> (ordered? '(1 5 2 4 3))  ; #t or #f
+          #f
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         },
         {
           'code': r"""
-          scm> (caddr '(1 2 3 4))
-          b13af181ea4aa633930e92779ea49cee
-          # locked
+          scm> (ordered? '(2 2))  ; #t or #f
+          #t
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
+          'multiline': False
+        },
+        {
+          'code': r"""
+          scm> (ordered? '(1 2 2 4 3))  ; #t or #f
+          #f
+          """,
+          'hidden': False,
+          'locked': False,
           'multiline': False
         }
       ],

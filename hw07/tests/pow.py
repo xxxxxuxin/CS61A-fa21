@@ -1,47 +1,43 @@
 test = {
-  'name': 'ordered?',
+  'name': 'pow',
   'points': 1,
   'suites': [
     {
       'cases': [
         {
           'code': r"""
-          scm> (ordered? '(1 2 3 4 5))  ; #t or #f
-          dd1c8dcce7b8598825d7b6b7d237639d
-          # locked
+          scm> (pow 2 5)
+          32
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         },
         {
           'code': r"""
-          scm> (ordered? '(1 5 2 4 3))  ; #t or #f
-          9e1a295fed6e9113292585fe7acb7556
-          # locked
+          scm> (pow 10 3)
+          1000
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         },
         {
           'code': r"""
-          scm> (ordered? '(2 2))  ; #t or #f
-          dd1c8dcce7b8598825d7b6b7d237639d
-          # locked
+          scm> (pow 3 3)
+          27
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         },
         {
           'code': r"""
-          scm> (ordered? '(1 2 2 4 3))  ; #t or #f
-          9e1a295fed6e9113292585fe7acb7556
-          # locked
+          scm> (pow 1 100000000000000) ; make sure this doesn't run forever!
+          1
           """,
           'hidden': False,
-          'locked': True,
+          'locked': False,
           'multiline': False
         }
       ],
