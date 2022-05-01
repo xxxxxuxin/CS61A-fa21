@@ -35,18 +35,14 @@ def scheme_eval(expr, env, _=None):  # Optional third argument is ignored
         return scheme_forms.SPECIAL_FORMS[first](rest, env)
     else:
         # BEGIN PROBLEM 3
-        deep_eval = lambda expr: scheme_eval(expr, env) # one argument func for map
-        new_expr = expr.map(lambda x:x) # copy the original expression
-
-        # operator should only be evaluated once, eval is essentially lookup
-        if isinstance(new_expr.first, Pair):
-            procedure = deep_eval(new_expr.first)
-        else:
-            procedure = env.lookup(new_expr.first) 
-
-        operands = new_expr.rest.map(deep_eval)
         
+        procedure = scheme_eval(first, env)
+        validate_procedure(procedure)
+
+        operands = rest.map(lambda expr: scheme_eval(expr, env))
+
         return scheme_apply(procedure, operands, env)
+
         # END PROBLEM 3
 
 
@@ -78,7 +74,7 @@ def scheme_apply(procedure, args, env):
         while expr.rest != nil:
             scheme_eval(expr.first, child)
             expr = expr.rest
-        return scheme_eval(expr.first, child)
+        return scheme_eval(expr.first, child, True) # tail context
         # END PROBLEM 9
     elif isinstance(procedure, MuProcedure):
         # BEGIN PROBLEM 11
@@ -119,7 +115,7 @@ def eval_all(expressions, env):
         while expr.rest != nil:
             scheme_eval(expr.first, env)
             expr = expr.rest
-        return scheme_eval(expr.first, env)
+        return scheme_eval(expr.first, env, True) # Tail context
     # END PROBLEM 6
 
 
@@ -157,7 +153,9 @@ def optimize_tail_calls(original_scheme_eval):
 
         result = Unevaluated(expr, env)
         # BEGIN PROBLEM EC
-        "*** YOUR CODE HERE ***"
+        while isinstance(result, Unevaluated):
+            result = original_scheme_eval(result.expr, result.env)
+        return result
         # END PROBLEM EC
     return optimized_eval
 
@@ -165,4 +163,4 @@ def optimize_tail_calls(original_scheme_eval):
 ################################################################
 # Uncomment the following line to apply tail call optimization #
 ################################################################
-# scheme_eval = optimize_tail_calls(scheme_eval)
+scheme_eval = optimize_tail_calls(scheme_eval)

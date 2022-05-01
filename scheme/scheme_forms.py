@@ -77,7 +77,7 @@ def do_begin_form(expressions, env):
     3
     """
     validate_form(expressions, 1)
-    return eval_all(expressions, env)
+    return eval_all(expressions, env) #tail context
 
 
 def do_lambda_form(expressions, env):
@@ -115,9 +115,9 @@ def do_if_form(expressions, env):
     """
     validate_form(expressions, 2, 3)
     if is_scheme_true(scheme_eval(expressions.first, env)):
-        return scheme_eval(expressions.rest.first, env)
+        return scheme_eval(expressions.rest.first, env, True)   # tail context
     elif len(expressions) == 3:
-        return scheme_eval(expressions.rest.rest.first, env)
+        return scheme_eval(expressions.rest.rest.first, env, True)
 
 
 def do_and_form(expressions, env):
@@ -138,7 +138,7 @@ def do_and_form(expressions, env):
     if expressions == nil:
         return True
     elif expressions.rest == nil:
-        value = scheme_eval(expressions.first, env)
+        value = scheme_eval(expressions.first, env, True) #tail context
         return False if is_scheme_false(value) else value 
     else:
         value = scheme_eval(expressions.first, env)
@@ -168,7 +168,7 @@ def do_or_form(expressions, env):
     if expressions == nil:
         return False
     elif expressions.rest == nil:
-        value = scheme_eval(expressions.first, env)
+        value = scheme_eval(expressions.first, env, True) #tail context
         return value if is_scheme_true(value) else False 
     else:
         value = scheme_eval(expressions.first, env)
@@ -199,7 +199,7 @@ def do_cond_form(expressions, env):
             if clause.rest == nil:
                 return test
             else:
-                return eval_all(clause.rest, env)
+                return eval_all(clause.rest, env) # tail context
             # END PROBLEM 13
         expressions = expressions.rest
 
@@ -213,7 +213,7 @@ def do_let_form(expressions, env):
     """
     validate_form(expressions, 2)
     let_env = make_let_frame(expressions.first, env)
-    return eval_all(expressions.rest, let_env)
+    return eval_all(expressions.rest, let_env) # tail context
 
 
 def make_let_frame(bindings, env):
